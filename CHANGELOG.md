@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.9 (2026-03-05)
+
+- Fix curl installer: strip trailing whitespace from hdiutil mount point output
+- Add mount point validation with helpful error message on failure
+- BDD test suite for installer mount parsing (8 scenarios)
+
 ## 1.0.8 (2026-03-05)
 
 - Fix curl installer: mount point parsing failed on volume names with spaces

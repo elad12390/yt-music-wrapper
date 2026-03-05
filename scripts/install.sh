@@ -32,7 +32,14 @@ echo "Downloading $(basename "$DOWNLOAD_URL")..."
 curl -#fL "$DOWNLOAD_URL" -o "$DMG_PATH"
 
 echo "Mounting DMG..."
-MOUNT_POINT=$(hdiutil attach "$DMG_PATH" -nobrowse -quiet | grep -o '/Volumes/.*')
+MOUNT_POINT=$(hdiutil attach "$DMG_PATH" -nobrowse 2>/dev/null | grep -o '/Volumes/.*' | sed 's/[[:space:]]*$//')
+
+if [ -z "$MOUNT_POINT" ]; then
+  echo "Failed to mount DMG. Try manually:"
+  echo "  1. Open the .dmg from https://github.com/$REPO/releases"
+  echo "  2. Drag YT Music to Applications"
+  exit 1
+fi
 
 if [ -d "$INSTALL_DIR/$APP_NAME.app" ]; then
   echo "Removing previous version..."
