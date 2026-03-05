@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.6 (2026-03-05)
+
+- Fix CI DMG creation: hdiutil "Resource busy" on GitHub Actions runner
+
 ## 1.0.5 (2026-03-05)
 
 - DMG size reduced 96MB → 72MB (−25%) via ULMO (LZMA) compression

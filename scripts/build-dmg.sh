@@ -21,6 +21,7 @@ if [ ! -d "$APP_PATH" ]; then
 fi
 
 codesign --sign - --deep --force "$APP_PATH"
+sleep 2
 
 rm -f "${OUT_DIR}/${DMG_NAME}"
 
@@ -30,6 +31,7 @@ hdiutil create \
   -srcfolder "$APP_PATH" \
   -ov \
   -format ULMO \
+  -nospotlight \
   "${OUT_DIR}/${DMG_NAME}"
 
 echo ""
