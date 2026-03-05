@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.8 (2026-03-05)
+
+- Fix curl installer: mount point parsing failed on volume names with spaces
+
 ## 1.0.7 (2026-03-05)
 
 - Fix CI x64 build: electron-builder outputs to release/mac/ not release/mac-x64/

@@ -32,7 +32,7 @@ echo "Downloading $(basename "$DOWNLOAD_URL")..."
 curl -#fL "$DOWNLOAD_URL" -o "$DMG_PATH"
 
 echo "Mounting DMG..."
-MOUNT_POINT=$(hdiutil attach "$DMG_PATH" -nobrowse -quiet | tail -1 | awk '{print $3}')
+MOUNT_POINT=$(hdiutil attach "$DMG_PATH" -nobrowse -quiet | grep -o '/Volumes/.*')
 
 if [ -d "$INSTALL_DIR/$APP_NAME.app" ]; then
   echo "Removing previous version..."
