@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+#
+# pre-push hook: Ensures the version in package.json was bumped
+# and CHANGELOG.md was updated before pushing to master.
+#
+# Install: run `./scripts/install-hooks.sh`
+
+set -euo pipefail
+
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+# Only enforce on master
+if [ "$BRANCH" != "master" ]; then
+  exit 0
+fi
+
+# Get the remote tracking info
+while read -r local_ref local_sha remote_ref remote_sha; do
+  # Skip deletes
+  if [ "$local_sha" = "0000000000000000000000000000000000000000" ]; then
+    continue
+  fi
+
+  # If remote_sha is all zeros, this is the first push — allow it
+  if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]; then
+    continue
+  fi
+
+  # Check if package.json version changed in the commits being pushed
+  VERSION_CHANGED=$(git diff "$remote_sha".."$local_sha" -- package.json | grep -c '"version"' || true)
+  if [ "$VERSION_CHANGED" -eq 0 ]; then
+    echo ""
+    echo "╔══════════════════════════════════════════════════════════╗"
+    echo "║  ❌  Push rejected: version not bumped                  ║"
+    echo "║                                                         ║"
+    echo "║  Before pushing to master, you must:                    ║"
+    echo "║    1. Bump version in package.json                      ║"
+    echo "║    2. Update CHANGELOG.md                               ║"
+    echo "║                                                         ║"
+    echo "║  Quick fix:                                             ║"
+    echo "║    bun run version:patch   (or :minor / :major)         ║"
+    echo "║                                                         ║"
+    echo "╚══════════════════════════════════════════════════════════╝"
+    echo ""
+    exit 1
+  fi
+
+  # Check if CHANGELOG.md was updated
+  CHANGELOG_CHANGED=$(git diff --name-only "$remote_sha".."$local_sha" | grep -c 'CHANGELOG.md' || true)
+  if [ "$CHANGELOG_CHANGED" -eq 0 ]; then
+    echo ""
+    echo "╔══════════════════════════════════════════════════════════╗"
+    echo "║  ❌  Push rejected: CHANGELOG.md not updated            ║"
+    echo "║                                                         ║"
+    echo "║  Before pushing to master, you must:                    ║"
+    echo "║    1. Add an entry to CHANGELOG.md                      ║"
+    echo "║    2. Or run: bun run version:patch                     ║"
+    echo "║                                                         ║"
+    echo "╚══════════════════════════════════════════════════════════╝"
+    echo ""
+    exit 1
+  fi
+done
+
+exit 0

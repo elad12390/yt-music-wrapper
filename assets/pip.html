@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    user-select: none;
+    -webkit-app-region: drag;
+    background: #1a1a1a;
+    color: #fff;
+  }
+  .container {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 12px;
+    gap: 12px;
+  }
+  .artwork {
+    width: 64px;
+    height: 64px;
+    border-radius: 6px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: #333;
+  }
+  .info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .title {
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .artist {
+    font-size: 11px;
+    color: #aaa;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .controls {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+    -webkit-app-region: no-drag;
+  }
+  .controls button {
+    background: none;
+    border: none;
+    color: #ccc;
+    font-size: 16px;
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+  }
+  .controls button:hover { background: rgba(255,255,255,0.1); color: #fff; }
+  .pause-state { color: #4ade80 !important; }
+</style>
+</head>
+<body>
+<div class="container">
+  <img class="artwork" id="artwork" src="" alt="">
+  <div class="info">
+    <div class="title" id="title">No track playing</div>
+    <div class="artist" id="artist"></div>
+    <div class="controls">
+      <button type="button" id="prev" title="Previous">⏮</button>
+      <button type="button" id="play" title="Play/Pause">⏯</button>
+      <button type="button" id="next" title="Next">⏭</button>
+    </div>
+  </div>
+</div>
+<script>
+  const titleEl = document.getElementById('title');
+  const artistEl = document.getElementById('artist');
+  const artworkEl = document.getElementById('artwork');
+  const playBtn = document.getElementById('play');
+
+  window.__updateTrack = function(track) {
+    titleEl.textContent = track.title || 'No track playing';
+    artistEl.textContent = track.artist || '';
+    if (track.artworkUrl) {
+      artworkEl.src = track.artworkUrl;
+      artworkEl.style.display = 'block';
+    } else {
+      artworkEl.style.display = 'none';
+    }
+    playBtn.textContent = track.isPaused ? '▶' : '⏸';
+    playBtn.className = track.isPaused ? '' : 'pause-state';
+  };
+</script>
+</body>
+</html>

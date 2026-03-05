@@ -1,0 +1,32 @@
+[package]
+name = "spotlight"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+napi = { version = "3", default-features = false, features = ["napi3", "async", "serde-json"] }
+napi-derive = "3"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+objc2 = "0.6"
+objc2-foundation = { version = "0.3", features = ["NSString", "NSArray", "NSError", "NSURL", "NSObject"] }
+objc2-core-spotlight = { version = "0.3", features = [
+  "CSSearchableIndex",
+  "CSSearchableItem",
+  "CSSearchableItemAttributeSet",
+  "CSSearchableItemAttributeSet_General",
+  "CSSearchableItemAttributeSet_Documents",
+  "CSSearchableItemAttributeSet_Media",
+  "block2",
+] }
+block2 = "0.6"
+
+[build-dependencies]
+napi-build = "2"
+
+[profile.release]
+lto = true
+strip = "symbols"
