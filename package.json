@@ -1,6 +1,6 @@
 {
   "name": "yt-music-wrapper",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Minimal Electron desktop wrapper for YouTube Music",
   "main": "dist/main.js",
   "author": "Elad Ben Haim",

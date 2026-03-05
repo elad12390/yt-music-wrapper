@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.10 (2026-03-06)
+
+- Resize app icon to standard macOS size (proper padding, ~76% content ratio)
+
 ## 1.0.9 (2026-03-05)
 
 - Fix curl installer: strip trailing whitespace from hdiutil mount point output
