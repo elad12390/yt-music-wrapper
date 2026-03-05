@@ -25,7 +25,25 @@ A native macOS desktop app for [YouTube Music](https://music.youtube.com) — bu
 
 ### From Releases (recommended)
 
-Download the latest `.dmg` from [Releases](https://github.com/elad12390/yt-music-wrapper/releases), open it, drag to Applications.
+1. Download the latest `.dmg` for your Mac from [Releases](https://github.com/elad12390/yt-music-wrapper/releases)
+2. Open the DMG, drag **YT Music** to Applications
+3. **First launch:** macOS will block the app because it's not notarized. Fix with one of these:
+
+**Option A** — Terminal one-liner (fastest):
+```bash
+xattr -cr "/Applications/YT Music.app"
+```
+
+**Option B** — Right-click bypass:
+1. Right-click (or Control+click) **YT Music** in Applications
+2. Click **Open** → click **Open** again in the dialog
+
+**Option C** — System Settings:
+1. Try opening YT Music normally (it will be blocked)
+2. Go to **System Settings → Privacy & Security**
+3. Scroll down — click **Open Anyway** next to the YT Music message
+
+> This is normal for apps outside the Mac App Store that don't have a $99/year Apple Developer certificate. The app is open source — you can audit every line of code.
 
 ### From Source
 

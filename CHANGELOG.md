@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.3 (2026-03-05)
+
+- README: step-by-step Gatekeeper bypass instructions (3 methods)
+- Added `scripts/allow-macos.sh` quarantine removal helper
+
 ## 1.0.2 (2026-03-05)
 
 - Prepare for open source: MIT license, README, CONTRIBUTING
