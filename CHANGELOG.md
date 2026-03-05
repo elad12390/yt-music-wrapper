@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.11 (2026-03-06)
+
+- Fix app icon: full-bleed red background so macOS applies squircle mask (standard dock size)
+
 ## 1.0.10 (2026-03-06)
 
 - Resize app icon to standard macOS size (proper padding, ~76% content ratio)
