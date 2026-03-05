@@ -19,56 +19,101 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@stable
         with:
           targets: aarch64-apple-darwin,x86_64-apple-darwin
 
+      - name: Check if version changed
+        id: check
+        run: |
+          VERSION="v$(node -p 'require("./package.json").version')"
+          if git rev-parse "$VERSION" >/dev/null 2>&1; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+            echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Install dependencies
+        if: steps.check.outputs.skip == 'false'
         run: npm install
 
       - name: Build native addon (arm64)
+        if: steps.check.outputs.skip == 'false'
+        working-directory: native/spotlight
         run: |
-          cd native/spotlight
           cargo build --release --target aarch64-apple-darwin
           cp target/aarch64-apple-darwin/release/libspotlight.dylib spotlight.darwin-arm64.node
 
       - name: Build native addon (x64)
+        if: steps.check.outputs.skip == 'false'
+        working-directory: native/spotlight
         run: |
-          cd native/spotlight
           cargo build --release --target x86_64-apple-darwin
           cp target/x86_64-apple-darwin/release/libspotlight.dylib spotlight.darwin-x64.node
 
       - name: Build TypeScript
+        if: steps.check.outputs.skip == 'false'
         run: npx tsc
 
-      - name: Get version
-        id: version
-        run: echo "version=v$(node -p 'require("./package.json").version')" >> "$GITHUB_OUTPUT"
-
-      - name: Extract changelog for this version
-        id: changelog
-        run: |
-          VERSION=$(node -p 'require("./package.json").version')
-          # Extract section for current version from CHANGELOG.md
-          NOTES=$(awk "/^## \[?${VERSION}\]?/{found=1; next} /^## /{if(found) exit} found{print}" CHANGELOG.md 2>/dev/null || echo "Release ${VERSION}")
-          if [ -z "$NOTES" ]; then
-            NOTES="Release ${VERSION}"
-          fi
-          # Write to file to handle multiline
-          echo "$NOTES" > /tmp/release-notes.txt
-
-      - name: Package app
-        run: npx electron-builder --mac --arm64 --x64
+      - name: Package app (arm64)
+        if: steps.check.outputs.skip == 'false'
+        run: npx electron-builder --mac --arm64
         env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Package app (x64)
+        if: steps.check.outputs.skip == 'false'
+        run: npx electron-builder --mac --x64
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Ad-hoc sign apps
+        if: steps.check.outputs.skip == 'false'
+        run: |
+          for app in release/mac*/"YT Music.app"; do
+            if [ -d "$app" ]; then
+              codesign --sign - --deep --force "$app"
+              echo "Signed: $app"
+            fi
+          done
+
+      - name: Generate release notes
+        if: steps.check.outputs.skip == 'false'
+        run: |
+          VERSION=$(node -p 'require("./package.json").version')
+          PREV_TAG=$(git tag --sort=-v:refname | head -1)
+
+          {
+            echo "## What's Changed"
+            echo ""
+
+            if [ -n "$PREV_TAG" ]; then
+              git log "${PREV_TAG}..HEAD" --pretty=format:"- %s" --no-merges
+            else
+              git log --pretty=format:"- %s" --no-merges
+            fi
+
+            echo ""
+            echo ""
+
+            CHANGELOG_SECTION=$(awk "/^## \[?${VERSION}\]?/{found=1; next} /^## /{if(found) exit} found{print}" CHANGELOG.md 2>/dev/null || true)
+            if [ -n "$CHANGELOG_SECTION" ]; then
+              echo "## Release Notes"
+              echo ""
+              echo "$CHANGELOG_SECTION"
+            fi
+          } > /tmp/release-notes.md
+
       - name: Create GitHub Release
+        if: steps.check.outputs.skip == 'false'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.version.outputs.version }}
-          name: ${{ steps.version.outputs.version }}
-          body_path: /tmp/release-notes.txt
+          tag_name: ${{ steps.check.outputs.version }}
+          name: YT Music ${{ steps.check.outputs.version }}
+          body_path: /tmp/release-notes.md
           files: |
             release/*.dmg
             release/*.zip

@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.1 (2026-03-05)
+
+- CI/CD builds installable DMGs for arm64 and x64
+- Auto-generated release notes from commits
+- Ad-hoc code signing in CI for Spotlight compatibility
+- macOS entitlements for JIT, network, and library validation
+- Artifact names include version and architecture
+
 ## 1.0.0 (2026-03-05)
 
 Initial release.
