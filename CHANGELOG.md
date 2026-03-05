@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.4 (2026-03-05)
+
+- One-line curl installer: auto-detects arch, downloads DMG, installs, removes quarantine
+
 ## 1.0.3 (2026-03-05)
 
 - README: step-by-step Gatekeeper bypass instructions (3 methods)

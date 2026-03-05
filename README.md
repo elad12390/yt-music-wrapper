@@ -23,7 +23,15 @@ A native macOS desktop app for [YouTube Music](https://music.youtube.com) — bu
 
 ## Install
 
-### From Releases (recommended)
+### Quick Install (recommended)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/elad12390/yt-music-wrapper/master/scripts/install.sh | bash
+```
+
+Downloads the latest release for your Mac, installs to `/Applications`, and removes the Gatekeeper quarantine automatically.
+
+### Manual Install
 
 1. Download the latest `.dmg` for your Mac from [Releases](https://github.com/elad12390/yt-music-wrapper/releases)
 2. Open the DMG, drag **YT Music** to Applications
