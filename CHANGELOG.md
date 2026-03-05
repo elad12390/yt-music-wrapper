@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.7 (2026-03-05)
+
+- Fix CI x64 build: electron-builder outputs to release/mac/ not release/mac-x64/
+
 ## 1.0.6 (2026-03-05)
 
 - Fix CI DMG creation: hdiutil "Resource busy" on GitHub Actions runner

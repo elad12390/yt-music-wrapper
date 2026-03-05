@@ -16,7 +16,10 @@ CSC_IDENTITY_AUTO_DISCOVERY=false npx electron-builder --mac "--${ARCH}" --dir
 
 APP_PATH="${OUT_DIR}/mac-${ARCH}/${APP_NAME}.app"
 if [ ! -d "$APP_PATH" ]; then
-  echo "Build failed — ${APP_PATH} not found"
+  APP_PATH="${OUT_DIR}/mac/${APP_NAME}.app"
+fi
+if [ ! -d "$APP_PATH" ]; then
+  echo "Build failed — .app not found in ${OUT_DIR}/mac-${ARCH}/ or ${OUT_DIR}/mac/"
   exit 1
 fi
 
