@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.2 (2026-03-05)
+
+- Prepare for open source: MIT license, README, CONTRIBUTING
+- GitHub issue templates (bug report, feature request) and PR template
+
 ## 1.0.1 (2026-03-05)
 
 - CI/CD builds installable DMGs for arm64 and x64
