@@ -2,6 +2,10 @@ appId: com.eladbenhaim.yt-music-wrapper
 productName: YT Music
 copyright: Copyright © 2026 Elad Ben Haim
 
+asar: true
+compression: maximum
+afterPack: build/afterPack.js
+
 directories:
   output: release
   buildResources: assets
@@ -12,14 +16,20 @@ files:
   - native/spotlight/*.node
   - "!src/**/*"
   - "!**/*.ts"
+  - "!**/*.map"
   - "!tsconfig.json"
+  - "!.bdd/**/*"
+  - "!scripts/**/*"
+  - "!native/spotlight/target/**/*"
+  - "!native/spotlight/src/**/*"
+  - "!native/spotlight/Cargo.*"
+  - "!native/spotlight/build.rs"
 
 mac:
   icon: assets/icon.icns
   category: public.app-category.music
   target:
     - target: dmg
-    - target: zip
   darkModeSupport: true
   protocols:
     - name: YT Music
@@ -32,6 +42,3 @@ mac:
 
 dmg:
   artifactName: "YT-Music-${version}-${arch}.dmg"
-
-zip:
-  artifactName: "YT-Music-${version}-${arch}.zip"

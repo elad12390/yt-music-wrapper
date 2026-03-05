@@ -1,6 +1,6 @@
 {
   "name": "yt-music-wrapper",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Minimal Electron desktop wrapper for YouTube Music",
   "main": "dist/main.js",
   "author": "Elad Ben Haim",
@@ -10,7 +10,9 @@
     "build": "tsc",
     "build:native": "cd native/spotlight && cargo build --release && cp target/release/libspotlight.dylib spotlight.darwin-arm64.node",
     "build:all": "npm run build:native && npm run build",
-    "dist": "npm run build:all && electron-builder --mac",
+    "dist": "npm run build:all && ./scripts/build-dmg.sh",
+    "dist:arm64": "npm run build:all && ./scripts/build-dmg.sh arm64",
+    "dist:x64": "npm run build:all && ./scripts/build-dmg.sh x64",
     "test:bdd": "npx bddgen --config .bdd/playwright.config.ts && npx playwright test --config .bdd/playwright.config.ts",
     "version:patch": "./scripts/bump-version.sh patch",
     "version:minor": "./scripts/bump-version.sh minor",

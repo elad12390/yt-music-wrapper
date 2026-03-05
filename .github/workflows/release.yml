@@ -56,29 +56,13 @@ jobs:
         if: steps.check.outputs.skip == 'false'
         run: npx tsc
 
-      - name: Package app (arm64)
+      - name: Build DMG (arm64)
         if: steps.check.outputs.skip == 'false'
-        run: npx electron-builder --mac --arm64
-        env:
-          CSC_IDENTITY_AUTO_DISCOVERY: "false"
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./scripts/build-dmg.sh arm64
 
-      - name: Package app (x64)
+      - name: Build DMG (x64)
         if: steps.check.outputs.skip == 'false'
-        run: npx electron-builder --mac --x64
-        env:
-          CSC_IDENTITY_AUTO_DISCOVERY: "false"
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Ad-hoc sign apps
-        if: steps.check.outputs.skip == 'false'
-        run: |
-          for app in release/mac*/"YT Music.app"; do
-            if [ -d "$app" ]; then
-              codesign --sign - --deep --force "$app"
-              echo "Signed: $app"
-            fi
-          done
+        run: ./scripts/build-dmg.sh x64
 
       - name: Generate release notes
         if: steps.check.outputs.skip == 'false'
@@ -116,6 +100,5 @@ jobs:
           body_path: /tmp/release-notes.md
           files: |
             release/*.dmg
-            release/*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

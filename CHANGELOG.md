@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.5 (2026-03-05)
+
+- DMG size reduced 96MB → 72MB (−25%) via ULMO (LZMA) compression
+- Stripped 219 unused Chromium locale dirs (−46MB unpacked)
+- App on disk reduced 260MB → 214MB (−18%)
+
 ## 1.0.4 (2026-03-05)
 
 - One-line curl installer: auto-detects arch, downloads DMG, installs, removes quarantine
