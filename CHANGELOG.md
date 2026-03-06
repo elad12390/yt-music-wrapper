@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.14 (2026-03-06)
+
+- Fix quit blocked during playback — bypass YouTube Music's beforeunload dialog
+
 ## 1.0.13 (2026-03-06)
 
 - Fix swapped like/dislike shortcuts (Cmd+Shift+Up = Like, Cmd+Shift+Down = Dislike)
