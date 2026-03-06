@@ -305,12 +305,12 @@ function buildAppMenu(): void {
         { type: 'separator' },
         {
           label: 'Like',
-          accelerator: 'CmdOrCtrl+Shift+Down',
+          accelerator: 'CmdOrCtrl+Shift+Up',
           click: () => executeLikeAction('like'),
         },
         {
           label: 'Dislike',
-          accelerator: 'CmdOrCtrl+Shift+Up',
+          accelerator: 'CmdOrCtrl+Shift+Down',
           click: () => executeLikeAction('dislike'),
         },
         { type: 'separator' },

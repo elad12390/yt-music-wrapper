@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.13 (2026-03-06)
+
+- Fix swapped like/dislike shortcuts (Cmd+Shift+Up = Like, Cmd+Shift+Down = Dislike)
+
 ## 1.0.12 (2026-03-06)
 
 - Security: fix code injection via deep link — use loadURL instead of executeJavaScript
