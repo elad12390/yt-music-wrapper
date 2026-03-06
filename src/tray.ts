@@ -72,7 +72,7 @@ export function rebuildTrayMenu(
     { type: 'separator' },
     {
       label: isPipOpen() ? 'Close Mini Player' : 'Mini Player',
-      click: () => togglePip(window, executeMediaAction, getCurrentTrack()),
+      click: () => togglePip(executeMediaAction, getCurrentTrack()),
     },
     buildSleepTimerMenu(() => executeMediaAction('playPause')),
     { type: 'separator' },

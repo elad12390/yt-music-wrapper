@@ -47,7 +47,7 @@ export const TRACK_OBSERVER_SCRIPT = `
         artist: info.artist,
         artwork: artwork,
       });
-    } catch(e) {}
+    } catch(e) { /* MediaSession may not be available */ }
   }
 
   function poll() {
@@ -114,7 +114,9 @@ export function startTrackMonitor(
         onPlaybackChange?.(info);
       }
       lastPaused = info.isPaused;
-    } catch {}
+    } catch (err) {
+      console.warn('Track poll failed:', err);
+    }
   }, 1000);
 }
 
@@ -123,6 +125,11 @@ export function stopTrackMonitor(): void {
     clearInterval(pollInterval);
     pollInterval = null;
   }
+  lastTrackKey = '';
+  currentTrack = null;
+  onTrackChange = null;
+  onPlaybackChange = null;
+  lastPaused = null;
 }
 
 export function getCurrentTrack(): TrackInfo | null {

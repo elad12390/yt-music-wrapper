@@ -2,9 +2,10 @@ import { BrowserWindow } from 'electron';
 import * as path from 'path';
 import type { TrackInfo } from './types';
 
+
 let pipWindow: BrowserWindow | null = null;
 
-export function createPipWindow(parent: BrowserWindow): BrowserWindow {
+export function createPipWindow(): BrowserWindow {
   if (pipWindow && !pipWindow.isDestroyed()) {
     pipWindow.focus();
     return pipWindow;
@@ -53,7 +54,9 @@ export function updatePipTrack(track: TrackInfo): void {
     .executeJavaScript(
       `window.__updateTrack && window.__updateTrack(${JSON.stringify(track)})`,
     )
-    .catch(() => {});
+    .catch((err) => {
+      console.warn('PiP track update failed:', err);
+    });
 }
 
 export function destroyPipWindow(): void {
@@ -68,7 +71,6 @@ export function isPipOpen(): boolean {
 }
 
 export function togglePip(
-  parent: BrowserWindow,
   executeMediaAction: (action: 'playPause' | 'next' | 'previous') => void,
   currentTrack: TrackInfo | null,
 ): void {
@@ -77,7 +79,7 @@ export function togglePip(
     return;
   }
 
-  const win = createPipWindow(parent);
+  const win = createPipWindow();
 
   win.webContents.on('before-input-event', (_event, input) => {
     if (input.type !== 'keyDown') return;

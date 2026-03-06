@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.0.12 (2026-03-06)
+
+- Security: fix code injection via deep link — use loadURL instead of executeJavaScript
+- Replace 15+ silent catch blocks with console.warn for debuggability
+- Extract app.on('ready') into named setup functions for readability
+- Remove unused parent param from PiP window
+- Detect architecture from UA instead of hardcoding 'arm' in stealth
+- Reset all module state in stopTrackMonitor to prevent stale data
+- Remove redundant identity .map() in spotlight indexing
+- Deduplicate sleep timer cleanup logic
+
 ## 1.0.11 (2026-03-06)
 
 - Fix app icon: full-bleed red background so macOS applies squircle mask (standard dock size)

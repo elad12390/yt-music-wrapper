@@ -66,7 +66,9 @@ function executeMediaAction(action: 'playPause' | 'next' | 'previous'): void {
     `,
   };
 
-  mainWindow.webContents.executeJavaScript(scripts[action]).catch(() => {});
+  mainWindow.webContents.executeJavaScript(scripts[action]).catch((err) => {
+    console.warn(`Media action '${action}' failed:`, err);
+  });
 }
 
 function executeLikeAction(action: 'like' | 'dislike'): void {
@@ -91,7 +93,9 @@ function executeLikeAction(action: 'like' | 'dislike'): void {
     `,
   };
 
-  mainWindow.webContents.executeJavaScript(selectors[action]).catch(() => {});
+  mainWindow.webContents.executeJavaScript(selectors[action]).catch((err) => {
+    console.warn(`Like action '${action}' failed:`, err);
+  });
 }
 
 function executeVolumeAction(direction: 'up' | 'down'): void {
@@ -107,7 +111,9 @@ function executeVolumeAction(direction: 'up' | 'down'): void {
         }
       })();`,
     )
-    .catch(() => {});
+    .catch((err) => {
+      console.warn('Volume action failed:', err);
+    });
 }
 
 function createWindow(): void {
@@ -206,10 +212,13 @@ function createWindow(): void {
                     },
                   ]);
                 }
-              } catch {
+              } catch (err) {
+                console.warn('Spotlight indexing failed:', err);
               }
             })
-            .catch(() => {});
+            .catch((err) => {
+              console.warn('Failed to get page URL for Spotlight:', err);
+            });
         }
       },
       onPlaybackChange: (track) => {
@@ -321,7 +330,7 @@ function buildAppMenu(): void {
           accelerator: 'CmdOrCtrl+Shift+M',
           click: () => {
             if (mainWindow) {
-              togglePip(mainWindow, executeMediaAction, getCurrentTrack());
+              togglePip(executeMediaAction, getCurrentTrack());
             }
           },
         },
@@ -382,17 +391,12 @@ function handleDeepLink(url: string): void {
     const songId = parsed.searchParams.get('id');
     if (parsed.hostname === 'play' && songId && mainWindow && !mainWindow.isDestroyed()) {
       mainWindow.show();
-      mainWindow.webContents
-        .executeJavaScript(
-          `(() => {
-            const a = document.createElement('a');
-            a.href = 'https://music.youtube.com/watch?v=${songId}';
-            a.click();
-          })();`,
-        )
-        .catch(() => {});
+      mainWindow.loadURL(
+        `https://music.youtube.com/watch?v=${encodeURIComponent(songId)}`,
+      );
     }
-  } catch {
+  } catch (err) {
+    console.warn('Deep link handling failed:', err);
   }
 }
 
@@ -409,17 +413,15 @@ app.on('will-finish-launching', () => {
 
 app.setAsDefaultProtocolClient('ytmusic');
 
-app.on('ready', () => {
-  if (process.platform === 'darwin') {
-    app.dock?.setIcon(path.join(__dirname, '..', 'assets', 'icon.png'));
-  }
-
+function setupUserAgent(): void {
   const electronUA = session.defaultSession.getUserAgent();
   const cleanUA = electronUA
     .replace(/\s+Electron\/[\w.]+/, '')
     .replace(/\s+yt-music-wrapper\/[\w.]+/, '');
   app.userAgentFallback = cleanUA;
+}
 
+function setupRequestInterception(): void {
   const chromeVersion = process.versions.chrome;
   const chromeMajor = chromeVersion.split('.')[0];
   const spoofedClientHints: Record<string, string> = {
@@ -460,17 +462,23 @@ app.on('ready', () => {
         delete headers['content-security-policy-report-only'];
         delete headers['Content-Security-Policy-Report-Only'];
       }
-    } catch {}
+    } catch (err) {
+      console.warn('CSP header stripping failed:', err);
+    }
 
     callback({ cancel: false, responseHeaders: headers });
   });
+}
 
+function setupPermissions(): void {
   session.defaultSession.setPermissionRequestHandler(
     (_webContents, permission, callback) => {
       callback(ALLOWED_PERMISSIONS.includes(permission));
     },
   );
+}
 
+function setupNavigationGuards(): void {
   app.on('web-contents-created', (_event, contents) => {
     contents.on('will-navigate', (_navEvent, navUrl) => {
       if (
@@ -484,7 +492,17 @@ app.on('ready', () => {
       }
     });
   });
+}
 
+app.on('ready', () => {
+  if (process.platform === 'darwin') {
+    app.dock?.setIcon(path.join(__dirname, '..', 'assets', 'icon.png'));
+  }
+
+  setupUserAgent();
+  setupRequestInterception();
+  setupPermissions();
+  setupNavigationGuards();
   buildAppMenu();
   createWindow();
   registerMediaKeys();
@@ -519,5 +537,7 @@ app.on('before-quit', () => {
   destroyPipWindow();
   destroyTray();
   globalShortcut.unregisterAll();
-  removeAllSongs().catch(() => {});
+  removeAllSongs().catch((err) => {
+    console.warn('Failed to clear Spotlight index on quit:', err);
+  });
 });

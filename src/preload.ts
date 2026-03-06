@@ -88,6 +88,7 @@ const STEALTH_SCRIPT = `
     mobile: false,
     platform: 'macOS',
     getHighEntropyValues: function(hints) {
+      var isArm = navigator.userAgent.includes('ARM') || !navigator.userAgent.includes('Intel');
       return Promise.resolve({
         brands: fakeBrands,
         fullVersionList: fakeFullBrands,
@@ -95,7 +96,7 @@ const STEALTH_SCRIPT = `
         model: '',
         platform: 'macOS',
         platformVersion: '15.3.0',
-        architecture: 'arm',
+        architecture: isArm ? 'arm' : 'x86',
         bitness: '64',
         uaFullVersion: fullChromeVersion,
         wow64: false,
@@ -120,5 +121,9 @@ const STEALTH_SCRIPT = `
 })();
 `;
 
-webFrame.executeJavaScript(STEALTH_SCRIPT).catch(() => {});
-webFrame.executeJavaScript(TRACK_OBSERVER_SCRIPT).catch(() => {});
+webFrame.executeJavaScript(STEALTH_SCRIPT).catch((err) => {
+  console.warn('Stealth script injection failed:', err);
+});
+webFrame.executeJavaScript(TRACK_OBSERVER_SCRIPT).catch((err) => {
+  console.warn('Track observer injection failed:', err);
+});

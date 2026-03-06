@@ -48,17 +48,9 @@ export async function indexSongs(
   if (!addon) return;
 
   try {
-    await addon.indexSongs(
-      songs.map((s) => ({
-        id: s.id,
-        title: s.title,
-        artist: s.artist,
-        album: s.album,
-        artworkUrl: s.artworkUrl,
-        duration: s.duration,
-      })),
-    );
-  } catch {
+    await addon.indexSongs(songs);
+  } catch (err) {
+    console.warn('Spotlight indexSongs failed:', err);
   }
 }
 
@@ -68,7 +60,8 @@ export async function removeSongs(ids: string[]): Promise<void> {
 
   try {
     await addon.removeSongs(ids);
-  } catch {
+  } catch (err) {
+    console.warn('Spotlight removeSongs failed:', err);
   }
 }
 
@@ -78,7 +71,8 @@ export async function removeAllSongs(): Promise<void> {
 
   try {
     await addon.removeAllSongs();
-  } catch {
+  } catch (err) {
+    console.warn('Spotlight removeAllSongs failed:', err);
   }
 }
 

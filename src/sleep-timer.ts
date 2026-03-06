@@ -10,10 +10,9 @@ export function startSleepTimer(minutes: number, onExpire: () => void): void {
   endsAt = Date.now() + minutes * 60 * 1000;
 
   timer = setTimeout(() => {
-    timer = null;
-    endsAt = null;
-    onExpireCallback?.();
-    onExpireCallback = null;
+    const cb = onExpireCallback;
+    cancelSleepTimer();
+    cb?.();
   }, minutes * 60 * 1000);
 }
 
